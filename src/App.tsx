@@ -1,85 +1,121 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import BootstrapSwitchButton from 'bootstrap-switch-button-react';
+import 'react-input-range/lib/css/index.css';
+import { Article as IArticle } from './types';
+import SearchBar from './components/search-bar';
+import Configuration from './components/configuration';
+import Article from './components/article';
+import DateRangeComponent from './components/date-range';
+import config from './config';
+import groupBy from './libs/group-by';
 const Loader = require('react-loader');
 
-const groupBy = (articles: any[]) => {
-  return articles.reduce((total: any, article) => {
-    const index = total.findIndex((item: any) => item.label === article.label);
-    if (index !== -1) {
-      const item = total[index];
-      total[index] = { ...item, count: item.count + 1 };
-    } else {
-      total.push({ label: article.label, count: 1 });
-    }
-
-    return total;
-  }, []);
-}
-
 function App() {
-
+  const [isError, setError] = useState(false);
   const [text, setText] = useState('');
   const [articles, setArticles] = useState([]);
   const [loaded, setLoaded] = useState(true);
   const [skipedLabels, setSkipedLabels] = useState([]);
+  const [dateRange, setDateRange] = useState({ min: 0, max: 0 });
+  const [dateRangeInterval, setDateRangeInterval] = useState({ min: 0, max: 0 });
+
+  //labels = to default render
+  const [labels, setLabels] = useState([]);
 
   const onChangeHandler = (event: any) => setText(event.target.value);
 
+  useEffect(() => {
+    const url = `${config.BACKEND_URL}:${config.BACKEND_PORT}/sources`;
+    axios.get(url)
+      .then(response => setLabels(response.data))
+      .catch(_error => setError(true));
+  }, []);
+
   const filteredArticle = () => {
-    // @ts-ignore
-    return articles.filter(article => !skipedLabels.some(label => label === article.label));
+    return articles
+      .filter((article: IArticle) => !skipedLabels.some(label => label === article.label))
+      .filter((article: IArticle) => article.date.ts >= dateRange.min && article.date.ts <= dateRange.max)
+      .sort((articleA: IArticle, articleB: IArticle) => articleB.date.ts - articleA.date.ts);
   }
 
-  let loadData = async (event: any) => {
+  let loadData = (event: any) => {
     setLoaded(false);
     setText('');
     setArticles([]);
     event.preventDefault();
-    const response = await axios.post('http://ec2-18-185-75-63.eu-central-1.compute.amazonaws.com:3000/filter', {
+    const url = `${config.BACKEND_URL}:${config.BACKEND_PORT}/filter`;
+    axios.post(url, {
       topic: text
-    });
-    setArticles(response.data);
-    setLoaded(true);
+    }).then(response => {
+      setArticles(response.data);
+      setLoaded(true);
+
+      // date range
+      const sortedArticles: IArticle[] = response.data
+        .filter((article: IArticle) => !skipedLabels.some(label => label === article.label))
+        .sort((articleA: IArticle, articleB: IArticle) => articleB.date.ts - articleA.date.ts);
+      const interval = { max: sortedArticles[0].date.ts, min: sortedArticles[sortedArticles.length - 1].date.ts };
+      //console.log('interval', interval)
+      setDateRangeInterval(interval);
+      setDateRange(interval);
+    }).catch(_error => setError(true));
   }
+
+  const getLabels = () => {
+    if (articles.length === 0) return labels.map(item => ({ label: item, count: null }))
+
+    const parsedLabels = groupBy(articles);
+    const missingLabels = labels.filter(label => !parsedLabels.some(parsedLabel => parsedLabel.label === label));
+
+    if (missingLabels.length === 0) return parsedLabels;
+    return [
+      ...parsedLabels,
+      ...missingLabels.map(item => ({ label: item, count: 0 }))
+    ];
+  }
+
+  if (isError) return <div className="container text-center mt-5">
+    <h2>Chyba v načítání dat</h2>
+    <p>Omlouváme se, ale stránka je dočastně nedostupná</p>
+  </div>
 
   return (
     <div>
-      <form className="form-group has-search container mt-4">
-        <span className="fa fa-search form-control-feedback"></span>
-        <input type="text" className="form-control" placeholder="Vyhledat" value={text} onChange={onChangeHandler} />
-        <button onClick={loadData} className="btn btn-primary btn-rounded btn-sm d-none">Hledat</button>
-      </form>
-      {/*articles.length > 0 && <div className="container mt-4">
-        {articles.map((article: any) => <p key={`${article.title}`}>
-          ({article.label}) <a href={`${article.url}`} target="_blank" rel="noreferrer">{article.title}</a> <small>{article.description}</small>
-        </p>)}
-  </div>*/}
+      <SearchBar
+        text={text}
+        onChangeHandler={onChangeHandler}
+        loadData={loadData}
+      />
+
+      {labels.length > 0 && <Configuration
+        labels={getLabels()}
+        skipedLabels={skipedLabels}
+        setSkipedLabels={(labelsToSkip) => {
+          setSkipedLabels(labelsToSkip);
+          // interval
+          var sortedArticlesForInterval: IArticle[] = [...articles]
+            .sort((articleA: IArticle, articleB: IArticle) => articleB.date.ts - articleA.date.ts)
+            .filter((article: IArticle) => !labelsToSkip.some((label: string) => label === article.label));
+
+          if (sortedArticlesForInterval.length > 0) {
+            // main interval
+            const interval = { max: sortedArticlesForInterval[0].date.ts, min: sortedArticlesForInterval[sortedArticlesForInterval.length - 1].date.ts };
+            console.log('set new interval - ', interval);
+            setDateRangeInterval(interval);
+            setDateRange(interval);
+          }
+        }}
+      />}
 
       <Loader loaded={loaded}>
-        {articles.length > 0 && <div className="container mt-2">
-          {groupBy(articles).map((item: any, index: number) => <div className="form-check form-check-inline m-2">
-            <BootstrapSwitchButton 
-              checked={!skipedLabels.some(label => label === item.label)} 
-              size="sm"
-              onChange={(checked: boolean) => {
-                // @ts-ignore
-                if (!checked) setSkipedLabels([...skipedLabels, item.label]);
-                else setSkipedLabels(skipedLabels.filter(label => label !== item.label));
-                // this.setState({ isUserAdmin: checked })
-              }}
-            />
-            <button key={`group-${index}`} className="btn btn-sm">
-              {item.label} <span className="badge badge-light">{item.count}</span>
-
-            </button>
-          </div>)}
-        </div>}
-
+        {articles.length > 0 && filteredArticle().length > 0 && <DateRangeComponent
+          dateRangeInterval={dateRangeInterval}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />}
+       
         {articles.length > 0 && <ul className="container list-group list-group-flush mt-2">
-          {filteredArticle().map((article: any) => <li className="list-group-item" key={`${article.title}`}>
-            ({article.label}) <a href={`${article.url}`} target="_blank" rel="noreferrer">{article.title}</a> <small>{article.description}</small>
-          </li>)}
+          {filteredArticle().map((article: IArticle) => <Article article={article} />)}
         </ul>}
       </Loader>
     </div>
