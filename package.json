@@ -16,8 +16,11 @@
     "react-dom": "^16.13.1",
     "react-input-range": "^1.3.0",
     "react-loader": "^2.4.7",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "typescript": "^3.7.5"
   },
   "scripts": {
@@ -45,6 +48,12 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
-    "@types/react-router-dom": "^5.1.4"
+    "@types/react-redux": "^7.1.7",
+    "@types/react-router-dom": "^5.1.4",
+    "@types/redux-devtools": "^3.0.47",
+    "@types/redux-devtools-log-monitor": "^1.0.34",
+    "redux-devtools": "^3.5.0",
+    "redux-devtools-dock-monitor": "^1.1.3",
+    "redux-devtools-log-monitor": "^1.4.0"
   }
 }

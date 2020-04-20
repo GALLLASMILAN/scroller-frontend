@@ -5,7 +5,7 @@ interface IProps {
     onChangeHandler: (event: any) => void;
     loadData: (event: any) => void;
 }
-function SearchBar(props: IProps) {
+export default (props: IProps) => {
     return (
         <form className="form-group has-search container mt-4">
             <span className="fa fa-search form-control-feedback"></span>
@@ -14,5 +14,3 @@ function SearchBar(props: IProps) {
         </form>
     );
 }
-
-export default SearchBar;
