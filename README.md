@@ -12,3 +12,6 @@ solution: update cluster -> Default capacity provider strategy (choose Fargate).
 
 
 ### Tagging requires that you opt in to the new ARN and resource ID format.
+
+Další zdroje:
+https://www.clovekvtisni.cz/vyhledat?q=koronavirus

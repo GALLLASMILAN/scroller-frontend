@@ -29,7 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "docker-build": "docker build . -t react-scroller",
-    "docker-run": "docker run -p 5000:5000 react-scroller"
+    "docker-run": "docker run -p 80:80 react-scroller"
   },
   "eslintConfig": {
     "extends": "react-app"
