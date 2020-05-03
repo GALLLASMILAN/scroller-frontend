@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setDateRange } from './actions';
+import { setDateRange, setDateRangeFilter } from './actions';
 import DateRange from './component';
 import { IArticle } from '../articles/types';
-import { IRange } from './types';
+import { IRange, IDateRangeFilter } from './types';
 import { useHistory } from "react-router-dom";
 
 interface IProps {
@@ -12,9 +12,11 @@ interface IProps {
     range: IRange;
     setDateRange: (range: IRange) => void;
     searchWord: string;
+    filter: IDateRangeFilter;
+    setDateRangeFilter: (filterItemId: number) => void;
 }
 const Container = (props: IProps) => {
-    const { articles, interval, range, setDateRange, searchWord } = props;
+    const { articles, interval, range, setDateRange, searchWord, filter, setDateRangeFilter } = props;
     const history = useHistory();
 
     if (!articles || articles.length === 0) return null;
@@ -28,7 +30,13 @@ const Container = (props: IProps) => {
         });
       }
 
-    return <DateRange dateRangeInterval={interval}  dateRange={range} setDateRange={changeDateInterval} />
+    return <DateRange 
+        dateRangeInterval={interval} 
+        dateRange={range} 
+        setDateRange={changeDateInterval} 
+        filter={filter} 
+        setDateRangeFilter={setDateRangeFilter}
+    />
 }
 
 const mapStateToProps = (state: any) => ({
@@ -36,9 +44,11 @@ const mapStateToProps = (state: any) => ({
     articles: state.articles,
     range: state.dateConfiguration.range,
     interval: state.dateConfiguration.interval,
+    filter: state.dateConfiguration.filter,
 })
 const mapDispatchToProps = (dispatch: any) => ({
-    setDateRange: (range: IRange) => dispatch(setDateRange(range))
+    setDateRange: (range: IRange) => dispatch(setDateRange(range)),
+    setDateRangeFilter: (filterId: number) => dispatch(setDateRangeFilter(filterId)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Container);
