@@ -5,6 +5,7 @@ import 'react-input-range/lib/css/index.css';
 import { Article as IArticle } from '../types';
 import config from '../config';
 import { useLocation } from "react-router-dom";
+import setTitle from '../lib/set-title';
 
 // redux
 import SearchBar from '../modules/search-bar/container';
@@ -43,6 +44,7 @@ function App(props: any) {
       .then(response => {
         props.setLabelsHandler(response.data);
         if (searchWord) {
+          setTitle(searchWord);
           props.setTextHandler(searchWord);
           const { from, to } = getQueryInterval();
           fetchData(searchWord, from, to);

@@ -5,7 +5,7 @@ import Logo from './logo.svg';
 const Menu = () => <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <Link className="navbar-brand p-2" to="#">
         <img src={Logo} alt="Logo" />
-        <span className="ml-2">Ověřeno.cz</span>
+        <span className="ml-2">Ověřujte.cz</span>
     </Link>
 </nav>
 
