@@ -22,19 +22,21 @@ const Container = (props: IProps) => {
     if (!articles || articles.length === 0) return null;
     if (!range || !interval) return null;
 
-    const changeDateInterval = (newDateRange: any) => {
+    const changeDateInterval = (newDateRange: IRange, redirect = false) => {
         setDateRange(newDateRange);
-        history.push({
-          pathname: '/',
-          search: `?search=${searchWord}&from=${newDateRange.min}&to=${newDateRange.max}`
-        });
-      }
+        if (redirect) {
+            history.push({
+                pathname: '/',
+                search: `?search=${searchWord}&from=${newDateRange.min}&to=${newDateRange.max}`
+            });
+        }
+    }
 
-    return <DateRange 
-        dateRangeInterval={interval} 
-        dateRange={range} 
-        setDateRange={changeDateInterval} 
-        filter={filter} 
+    return <DateRange
+        dateRangeInterval={interval}
+        dateRange={range}
+        setDateRange={changeDateInterval}
+        filter={filter}
         setDateRangeFilter={setDateRangeFilter}
     />
 }

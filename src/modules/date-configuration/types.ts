@@ -13,5 +13,5 @@ export interface IDateRangeFilter {
 export interface IFilterItem {
     id: number;
     name: string;
-    tsFrom: () => number;
+    tsFrom: (tsTo: number) => number;
 }

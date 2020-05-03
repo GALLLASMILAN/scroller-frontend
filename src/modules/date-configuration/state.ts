@@ -8,29 +8,29 @@ export const defaultRangeFilterState: IDateRangeFilter = {
         {
             id: 1,
             name: 'Celé období',
-            tsFrom: () => 0
+            tsFrom: (_tsTo: number) => 0
         },
         {
             id: 2,
             name: 'Rok',
-            tsFrom: () => {
-                const date2 = new Date();
+            tsFrom: (tsTo: number) => {
+                const date2 = new Date(tsTo);
                 return date2.setFullYear(date2.getFullYear()-1)
             }
         },
         {
             id: 3,
             name: '3 měsíce',
-            tsFrom: () => {
-                const date3 = new Date();
+            tsFrom: (tsTo: number) => {
+                const date3 = new Date(tsTo);
                 return date3.setMonth(date3.getMonth()-3)
             }
         },
         {
             id: 4,
             name: 'Měsíc',
-            tsFrom: () => {
-                const date4 = new Date();
+            tsFrom: (tsTo: number) => {
+                const date4 = new Date(tsTo);
                 return date4.setMonth(date4.getMonth()-1)
             }
         },
