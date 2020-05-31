@@ -10,9 +10,11 @@ import Registration from './pages/registration';
 import LostPassword from './pages/lost-password';
 import Menu from './components/common/menu';
 import config from './config';
+import OppeningText from './modules/oppennig-text/container';
 
 const App = () => <Router>
   {config.MODULES.MENU && <Menu />}
+  <OppeningText />
   <Switch>
     <Route exact path="/">
       <Search />

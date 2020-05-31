@@ -1,5 +1,5 @@
 const productionConfig = {
-    BACKEND_URL: "http://3.121.209.17",
+    BACKEND_URL: "http://52.57.227.56",
     BACKEND_PORT: 4000,
     MODULES: {
         MENU: true,
@@ -7,7 +7,7 @@ const productionConfig = {
 }
 
 const defaultConfig = {
-    BACKEND_URL: "http://3.121.209.17",
+    BACKEND_URL: "http://52.57.227.56",
     BACKEND_PORT: 4000,
     MODULES: {
         MENU: true,
