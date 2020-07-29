@@ -15,3 +15,15 @@ solution: update cluster -> Default capacity provider strategy (choose Fargate).
 
 Další zdroje:
 https://www.clovekvtisni.cz/vyhledat?q=koronavirus
+
+
+## docker
+<img src="https://miro.medium.com/max/700/1*Ydxg0X39m3VDA9c01KFffQ.png" />
+
+#### clen up
+docker image prune
+docker image prune -a ## delete all containers
+docker container prune
+
+
+docker push galileogalilei/node-scroller-fe:latest
