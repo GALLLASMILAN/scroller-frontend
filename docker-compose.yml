@@ -3,6 +3,8 @@ services:
     react:
         container_name: node-scroller-fe
         image: galileogalilei/node-scroller-fe
-        build: .
+        build:
+            context: ./
+            dockerfile: ./docker-images/Dockerfile
         ports:
             - '80:5000'

@@ -1,0 +1,10 @@
+.git
+docker-images
+node_modules
+public
+scripts
+src
+docker-compose.yml
+package-lock.json
+README.md
+tsconfig.json

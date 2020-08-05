@@ -1,0 +1,1 @@
+docker push galileogalilei/node-scroller-fe:latest
